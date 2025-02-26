@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Category } from "./categorySlice";
+import { Review } from "../components/product/CustomerReviews";
 
 export interface Product {
   thumbnail: string;
@@ -18,12 +20,7 @@ export interface Product {
   shippingInformation: string;
   sku: string;
   returnPolicy: string;
-  reviews: {
-    reviewerName: string;
-    rating: number;
-    comment: string;
-    date: string;
-  }[];
+  reviews: Review[];
   rating: number;
   id: number;
   title: string;
@@ -31,17 +28,53 @@ export interface Product {
   price: number;
   quantity?: number;
 }
+
+export const APIBaseURL = "https://dummyjson.com/products";
 // Product Slice
-export const fetchProducts = () => { }
+export const fetchProducts = createAsyncThunk(
+  "product/fetchProducts",
+  async (params : {
+    page: number,
+    category?: Category,
+    id?: number
+  }) => {
+    const { page, category } = params;
+    const perPage = 9;
+    const skip = perPage * (page - 1);
+    const urlParams = `?skip=${skip}&limit=${perPage}`;
+    const baseUrl = category ? `${APIBaseURL}/category/${category.slug}` : APIBaseURL;
+    const response = await fetch((params.id && !category) ? APIBaseURL + "/" + params.id : baseUrl + urlParams);
+    return params.id ? {
+      products: [await response.json()]
+    } : await response.json();
+  }
+)
+
+export const searchProducts = createAsyncThunk(
+  "product/searchProducts",
+  async (query: string) => {
+    if(query.length > 0){
+      const response = await fetch(`${APIBaseURL}/search?q=${query}&limit=3`);
+      return await response.json();
+    } else {
+      return null;  
+    }
+  }
+)
 
 const initialState: {
-  items: Product[];
-  isLoading: boolean;
-  currentPage: number;
+  items: Product[],
+  searchItems: Product[],
+  isLoading: boolean,
+  currentPage: number,
+  currentCategory?: Category
+  isSearchLoading: boolean,
 } = {
   items: [],
+  searchItems: [],
   isLoading: false,
   currentPage: 1,
+  isSearchLoading: false,
 };
 
 const productSlice = createSlice({
@@ -49,12 +82,28 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     setPage: (state, action) => {
+      state.currentPage = action.payload
     },
+    setCategory(state, action){
+      state.currentCategory = action.payload;
+    }
   },
   extraReducers: (builder) => {
-
+    builder.addCase(fetchProducts.pending, (state) => {
+      state.isLoading = true;
+    }).addCase(fetchProducts.fulfilled, (state, action) => {
+      state.items = action.payload.products as Product[];
+      state.isLoading = false;
+    }).addCase(searchProducts.pending, (state) => {
+      state.isSearchLoading = true;
+    }).addCase(searchProducts.fulfilled, (state, action) => {
+      if(action.payload){
+        state.searchItems = action.payload.products as Product[];
+      }
+      state.isSearchLoading = false;
+    })
   },
 });
 
-export const { setPage } = productSlice.actions;
+export const { setPage, setCategory } = productSlice.actions;
 export default productSlice.reducer;

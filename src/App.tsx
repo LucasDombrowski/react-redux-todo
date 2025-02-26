@@ -1,21 +1,23 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import "./App.css";
-import ProductDetails from "./components/ProductDetails";
-import Cart from "./components/Cart";
-import ProductList from "./components/ProductList";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import ProductDetails from './components/ProductDetails';
+import Cart from './components/Cart';
+import ProductList from './components/ProductList';
+import Search from './components/Search';
+import Wishlist from './components/Wishlist';
+import Navbar from './components/Navbar';
 
 const App = () => {
   return (
     <Router>
       <div className="w-full mx-auto">
-        <nav className="flex justify-center">
-          <Link className="m-3" to="/">Accueil</Link>
-          <Link className="m-3" to="/cart">Panier</Link>
-        </nav>
+        <Navbar />
         <Routes>
           <Route path="/" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
       </div>
     </Router>
