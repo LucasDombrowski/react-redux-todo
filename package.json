@@ -23,6 +23,7 @@
     "react-select": "^5.10.0",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+    "reselect": "^5.1.1",
     "swiper": "^11.2.4",
     "tailwind": "^4.0.0",
     "typescript": "^5.7.2"

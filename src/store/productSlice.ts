@@ -33,18 +33,18 @@ export const APIBaseURL = "https://dummyjson.com/products";
 // Product Slice
 export const fetchProducts = createAsyncThunk(
   "product/fetchProducts",
-  async (params : {
+  async (params: {
     page: number,
     category?: Category,
     id?: number
   }) => {
-    const { page, category } = params;
+    const { page, category, id } = params;
     const perPage = 9;
     const skip = perPage * (page - 1);
     const urlParams = `?skip=${skip}&limit=${perPage}`;
     const baseUrl = category ? `${APIBaseURL}/category/${category.slug}` : APIBaseURL;
-    const response = await fetch((params.id && !category) ? APIBaseURL + "/" + params.id : baseUrl + urlParams);
-    return params.id ? {
+    const response = await fetch((typeof id === "number" && !category) ? APIBaseURL + "/" + id : baseUrl + urlParams);
+    return id ? {
       products: [await response.json()]
     } : await response.json();
   }
@@ -53,11 +53,11 @@ export const fetchProducts = createAsyncThunk(
 export const searchProducts = createAsyncThunk(
   "product/searchProducts",
   async (query: string) => {
-    if(query.length > 0){
+    if (query.length > 0) {
       const response = await fetch(`${APIBaseURL}/search?q=${query}&limit=3`);
       return await response.json();
     } else {
-      return null;  
+      return null;
     }
   }
 )
@@ -84,20 +84,23 @@ const productSlice = createSlice({
     setPage: (state, action) => {
       state.currentPage = action.payload
     },
-    setCategory(state, action){
+    setCategory(state, action) {
       state.currentCategory = action.payload;
+      state.currentPage = 1;
     }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
       state.isLoading = true;
     }).addCase(fetchProducts.fulfilled, (state, action) => {
-      state.items = action.payload.products as Product[];
+      if (action.payload.products) {
+        state.items = action.payload.products as Product[];
+      }
       state.isLoading = false;
     }).addCase(searchProducts.pending, (state) => {
       state.isSearchLoading = true;
     }).addCase(searchProducts.fulfilled, (state, action) => {
-      if(action.payload){
+      if (action.payload) {
         state.searchItems = action.payload.products as Product[];
       }
       state.isSearchLoading = false;

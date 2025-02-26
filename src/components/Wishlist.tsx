@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import ProductListing from "./ProductListing";
+import ProductListing from "./listing/ProductListing";
 
 export default function Wishlist() {
   const items = useSelector((state: RootState) => state.wishlist.items);
