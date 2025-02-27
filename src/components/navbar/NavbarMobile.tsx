@@ -19,8 +19,8 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({ onClose }) => {
         <div className="sm:hidden bg-white shadow-md rounded-lg mt-2 p-4">
             <div className="flex flex-col space-y-2">
                 <NavbarLink to="/" label="Accueil" onClick={onClose} />
-                <NavbarLink to="/cart" label="Panier" icon={<ShoppingCart className="w-5 h-5 inline mr-1" />} badge={cartTotal} onClick={onClose} />
-                <NavbarLink to="/wishlist" label="Wishlist" icon={<Heart className="w-5 h-5 inline mr-1" />} badge={wishlistTotal} onClick={onClose} />
+                <NavbarLink to="/cart" label="Panier" icon={<ShoppingCart className="w-5 h-5 inline mr-1" />} badge={cartTotal > 0 ? cartTotal : undefined} onClick={onClose} />
+                <NavbarLink to="/wishlist" label="Wishlist" icon={<Heart className="w-5 h-5 inline mr-1" />} badge={wishlistTotal > 0 ? cartTotal : undefined} onClick={onClose} />
             </div>
         </div>
     );

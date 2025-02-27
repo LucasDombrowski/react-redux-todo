@@ -23,8 +23,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       ref={cardRef}
       className="relative bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
     >
-      <Link to={`/products/${product.id}`}>
-        <img src={product.thumbnail} alt={product.title} className="w-full h-56 object-cover" />
+      <Link to={`/products/${product.id}`} className="group">
+        <img src={product.thumbnail} alt={product.title} className="w-full h-56 object-cover group-hover:scale-110 transition-all duration-500" />
       </Link>
       <div className="p-4">
         <Link to={`/products/${product.id}`}>
